@@ -1,6 +1,7 @@
 # 프롬프트 관리 프로그램
 
-# 이전 미션에서 작성한 프롬프트를 기본 데이터로 등록 (리스트 + 딕셔너리 구조)
+import unicodedata
+
 prompts = [
     {
         "title": "블로그 글 작성 도우미",
@@ -23,6 +24,13 @@ prompts = [
 ]
 
 CATEGORIES = ["텍스트 생성", "이미지 생성", "영상 생성", "페르소나", "자동화", "기타"]
+
+
+def get_choice(prompt_text):
+    # 입력을 받아서 공백 제거 + 전각 숫자 등을 일반 숫자로 정규화
+    raw = input(prompt_text)
+    normalized = unicodedata.normalize("NFKC", raw)
+    return normalized.strip()
 
 
 def show_menu():
@@ -57,7 +65,7 @@ def add_prompt():
         print(f"{i}) {cat}")
     print("(번호를 선택하거나, 목록에 없으면 직접 입력하세요)")
 
-    cat_input = input("선택: ").strip()
+    cat_input = get_choice("선택: ")
     if cat_input.isdigit() and 1 <= int(cat_input) <= len(CATEGORIES):
         category = CATEGORIES[int(cat_input) - 1]
     elif cat_input:
@@ -89,10 +97,35 @@ def show_list():
     print(f"\n총 {len(prompts)}개의 프롬프트")
 
 
+def show_by_category():
+    print("\n=== 카테고리별 조회 ===")
+    for i, cat in enumerate(CATEGORIES, start=1):
+        print(f"{i}) {cat}")
+
+    cat_input = get_choice("선택: ")
+    if cat_input.isdigit() and 1 <= int(cat_input) <= len(CATEGORIES):
+        category = CATEGORIES[int(cat_input) - 1]
+    else:
+        category = cat_input
+
+    filtered = [p for p in prompts if p["category"] == category]
+
+    print(f"\n[{category}] 카테고리 프롬프트:")
+    if not filtered:
+        print("해당 카테고리에 프롬프트가 없습니다.")
+        return
+
+    for i, p in enumerate(filtered, start=1):
+        star = " ⭐" if p["favorite"] else ""
+        print(f"{i}. {p['title']}{star}")
+
+    print(f"\n총 {len(filtered)}개의 프롬프트")
+
+
 def main():
     while True:
         show_menu()
-        choice = input("선택: ").strip()
+        choice = get_choice("선택: ")
 
         if choice == "0":
             print("프로그램을 종료합니다.")
@@ -102,7 +135,7 @@ def main():
         elif choice == "2":
             show_list()
         elif choice == "3":
-            print("(카테고리별 조회 기능은 곧 추가됩니다)")
+            show_by_category()
         elif choice == "4":
             print("(프롬프트 검색 기능은 곧 추가됩니다)")
         elif choice == "5":
