@@ -169,6 +169,29 @@ def show_detail():
     print("--------------------------")
 
 
+def toggle_favorite():
+    print("\n=== 즐겨찾기 관리 ===")
+
+    if not prompts:
+        print("등록된 프롬프트가 없습니다.")
+        return
+
+    for i, p in enumerate(prompts, start=1):
+        star = " ⭐" if p["favorite"] else ""
+        print(f"{i}. [{p['category']}] {p['title']}{star}")
+
+    num_input = get_choice("즐겨찾기 설정/해제할 번호를 선택하세요: ")
+
+    if not num_input.isdigit() or not (1 <= int(num_input) <= len(prompts)):
+        print("잘못된 번호입니다.")
+        return
+
+    p = prompts[int(num_input) - 1]
+    p["favorite"] = not p["favorite"]
+    status = "추가" if p["favorite"] else "해제"
+    print(f"\n'{p['title']}' 즐겨찾기가 {status}되었습니다.")
+
+
 def main():
     while True:
         show_menu()
@@ -188,7 +211,7 @@ def main():
         elif choice == "5":
             show_detail()
         elif choice == "6":
-            print("(즐겨찾기 관리 기능은 곧 추가됩니다)")
+            toggle_favorite()
         elif choice == "7":
             print("(즐겨찾기 목록 기능은 곧 추가됩니다)")
         else:
