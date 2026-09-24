@@ -143,6 +143,32 @@ def search_prompt():
     print(f"\n총 {len(results)}개의 검색 결과")
 
 
+def show_detail():
+    print("\n=== 프롬프트 상세 보기 ===")
+
+    if not prompts:
+        print("등록된 프롬프트가 없습니다.")
+        return
+
+    for i, p in enumerate(prompts, start=1):
+        star = " ⭐" if p["favorite"] else ""
+        print(f"{i}. [{p['category']}] {p['title']}{star}")
+
+    num_input = get_choice("상세히 볼 번호를 선택하세요: ")
+
+    if not num_input.isdigit() or not (1 <= int(num_input) <= len(prompts)):
+        print("잘못된 번호입니다.")
+        return
+
+    p = prompts[int(num_input) - 1]
+    print("\n--------------------------")
+    print(f"제목: {p['title']}")
+    print(f"카테고리: {p['category']}")
+    print(f"즐겨찾기: {'예 ⭐' if p['favorite'] else '아니오'}")
+    print(f"내용:\n{p['content']}")
+    print("--------------------------")
+
+
 def main():
     while True:
         show_menu()
@@ -160,7 +186,7 @@ def main():
         elif choice == "4":
             search_prompt()
         elif choice == "5":
-            print("(프롬프트 상세 보기 기능은 곧 추가됩니다)")
+            show_detail()
         elif choice == "6":
             print("(즐겨찾기 관리 기능은 곧 추가됩니다)")
         elif choice == "7":
