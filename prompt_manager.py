@@ -1,8 +1,13 @@
 # 프롬프트 관리 프로그램
 
 import unicodedata
+import json
+import os
 
-prompts = [
+DATA_FILE = "prompts.json"
+EXPORT_DIR = "exports"
+
+DEFAULT_PROMPTS = [
     {
         "title": "블로그 글 작성 도우미",
         "content": "당신은 10년 경력의 전문 블로거입니다. 주어진 주제에 대해 SEO에 최적화된 블로그 글을 작성해주세요. 서론, 본론, 결론 구조를 갖추고, 독자의 관심을 끄는 제목을 3개 제안해주세요.",
@@ -26,6 +31,27 @@ prompts = [
 CATEGORIES = ["텍스트 생성", "이미지 생성", "영상 생성", "페르소나", "자동화", "기타"]
 
 
+def load_prompts():
+    """저장된 JSON 파일이 있으면 불러오고, 없으면 기본 프롬프트 3개로 시작한다. (보너스 1)"""
+    if os.path.exists(DATA_FILE):
+        try:
+            with open(DATA_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, OSError):
+            print(f"'{DATA_FILE}' 파일을 읽는 중 문제가 발생해 기본 데이터로 시작합니다.")
+            return [dict(p) for p in DEFAULT_PROMPTS]
+    return [dict(p) for p in DEFAULT_PROMPTS]
+
+
+def save_prompts():
+    """현재 프롬프트 목록을 JSON 파일로 저장한다. (보너스 1)"""
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(prompts, f, ensure_ascii=False, indent=2)
+
+
+prompts = load_prompts()
+
+
 def get_choice(prompt_text):
     raw = input(prompt_text)
     normalized = unicodedata.normalize("NFKC", raw)
@@ -41,29 +67,26 @@ def show_menu():
     print("5. 프롬프트 상세 보기")
     print("6. 즐겨찾기 관리")
     print("7. 즐겨찾기 목록")
+    print("8. 프롬프트 내보내기 (카테고리별 Markdown)")
     print("0. 종료")
 
 
 def add_prompt():
     print("\n=== 프롬프트 추가 ===")
-
     while True:
         title = input("제목: ").strip()
         if title:
             break
         print("제목은 비어있을 수 없습니다. 다시 입력해주세요.")
-
     while True:
         content = input("내용: ").strip()
         if content:
             break
         print("내용은 비어있을 수 없습니다. 다시 입력해주세요.")
-
     print("\n카테고리 선택:")
     for i, cat in enumerate(CATEGORIES, start=1):
         print(f"{i}) {cat}")
     print("(번호를 선택하거나, 목록에 없으면 직접 입력하세요)")
-
     cat_input = get_choice("선택: ")
     if cat_input.isdigit() and 1 <= int(cat_input) <= len(CATEGORIES):
         category = CATEGORIES[int(cat_input) - 1]
@@ -71,28 +94,19 @@ def add_prompt():
         category = cat_input
     else:
         category = "기타"
-
-    prompts.append({
-        "title": title,
-        "content": content,
-        "category": category,
-        "favorite": False
-    })
-
+    prompts.append({"title": title, "content": content, "category": category, "favorite": False})
+    save_prompts()
     print(f"\n'{title}' 프롬프트가 추가되었습니다!")
 
 
 def show_list():
     print("\n=== 프롬프트 목록 ===")
-
     if not prompts:
         print("등록된 프롬프트가 없습니다.")
         return
-
     for i, p in enumerate(prompts, start=1):
         star = " ⭐" if p["favorite"] else ""
         print(f"{i}. [{p['category']}] {p['title']}{star}")
-
     print(f"\n총 {len(prompts)}개의 프롬프트")
 
 
@@ -100,66 +114,51 @@ def show_by_category():
     print("\n=== 카테고리별 조회 ===")
     for i, cat in enumerate(CATEGORIES, start=1):
         print(f"{i}) {cat}")
-
     cat_input = get_choice("선택: ")
     if cat_input.isdigit() and 1 <= int(cat_input) <= len(CATEGORIES):
         category = CATEGORIES[int(cat_input) - 1]
     else:
         category = cat_input
-
     filtered = [p for p in prompts if p["category"] == category]
-
     print(f"\n[{category}] 카테고리 프롬프트:")
     if not filtered:
         print("해당 카테고리에 프롬프트가 없습니다.")
         return
-
     for i, p in enumerate(filtered, start=1):
         star = " ⭐" if p["favorite"] else ""
         print(f"{i}. {p['title']}{star}")
-
     print(f"\n총 {len(filtered)}개의 프롬프트")
 
 
 def search_prompt():
     print("\n=== 프롬프트 검색 ===")
     keyword = input("검색어를 입력하세요 (제목/내용): ").strip()
-
     if not keyword:
         print("검색어를 입력해주세요.")
         return
-
     results = [p for p in prompts if keyword in p["title"] or keyword in p["content"]]
-
     print(f"\n'{keyword}' 검색 결과:")
     if not results:
         print("검색 결과가 없습니다.")
         return
-
     for i, p in enumerate(results, start=1):
         star = " ⭐" if p["favorite"] else ""
         print(f"{i}. [{p['category']}] {p['title']}{star}")
-
     print(f"\n총 {len(results)}개의 검색 결과")
 
 
 def show_detail():
     print("\n=== 프롬프트 상세 보기 ===")
-
     if not prompts:
         print("등록된 프롬프트가 없습니다.")
         return
-
     for i, p in enumerate(prompts, start=1):
         star = " ⭐" if p["favorite"] else ""
         print(f"{i}. [{p['category']}] {p['title']}{star}")
-
     num_input = get_choice("상세히 볼 번호를 선택하세요: ")
-
     if not num_input.isdigit() or not (1 <= int(num_input) <= len(prompts)):
         print("잘못된 번호입니다.")
         return
-
     p = prompts[int(num_input) - 1]
     print("\n--------------------------")
     print(f"제목: {p['title']}")
@@ -171,48 +170,74 @@ def show_detail():
 
 def toggle_favorite():
     print("\n=== 즐겨찾기 관리 ===")
-
     if not prompts:
         print("등록된 프롬프트가 없습니다.")
         return
-
     for i, p in enumerate(prompts, start=1):
         star = " ⭐" if p["favorite"] else ""
         print(f"{i}. [{p['category']}] {p['title']}{star}")
-
     num_input = get_choice("즐겨찾기 설정/해제할 번호를 선택하세요: ")
-
     if not num_input.isdigit() or not (1 <= int(num_input) <= len(prompts)):
         print("잘못된 번호입니다.")
         return
-
     p = prompts[int(num_input) - 1]
     p["favorite"] = not p["favorite"]
+    save_prompts()
     status = "추가" if p["favorite"] else "해제"
     print(f"\n'{p['title']}' 즐겨찾기가 {status}되었습니다.")
 
 
 def show_favorites():
     print("\n=== 즐겨찾기 목록 ===")
-
     favorites = [p for p in prompts if p["favorite"]]
-
     if not favorites:
         print("즐겨찾기한 프롬프트가 없습니다.")
         return
-
     for i, p in enumerate(favorites, start=1):
         print(f"{i}. [{p['category']}] {p['title']} ⭐")
-
     print(f"\n총 {len(favorites)}개의 즐겨찾기")
+
+
+def export_prompts_markdown():
+    """카테고리별로 프롬프트를 Markdown 파일로 내보낸다. (보너스 1)"""
+    print("\n=== 프롬프트 내보내기 ===")
+    if not prompts:
+        print("내보낼 프롬프트가 없습니다.")
+        return
+
+    os.makedirs(EXPORT_DIR, exist_ok=True)
+
+    categories_in_use = sorted(set(p["category"] for p in prompts))
+    exported_files = []
+
+    for category in categories_in_use:
+        items = [p for p in prompts if p["category"] == category]
+        safe_name = category.replace(" ", "_")
+        file_path = os.path.join(EXPORT_DIR, f"{safe_name}.md")
+
+        lines = [f"# {category}\n"]
+        for p in items:
+            star = " ⭐" if p["favorite"] else ""
+            lines.append(f"## {p['title']}{star}\n")
+            lines.append(f"{p['content']}\n")
+            lines.append("---\n")
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+
+        exported_files.append(file_path)
+
+    print(f"'{EXPORT_DIR}' 폴더에 카테고리별 Markdown 파일 {len(exported_files)}개를 내보냈습니다:")
+    for path in exported_files:
+        print(f" - {path}")
 
 
 def main():
     while True:
         show_menu()
         choice = get_choice("선택: ")
-
         if choice == "0":
+            save_prompts()
             print("프로그램을 종료합니다.")
             break
         elif choice == "1":
@@ -229,6 +254,8 @@ def main():
             toggle_favorite()
         elif choice == "7":
             show_favorites()
+        elif choice == "8":
+            export_prompts_markdown()
         else:
             print("잘못된 번호입니다. 다시 입력해주세요.")
 
