@@ -38,6 +38,7 @@ python prompt_manager.py
 5. 프롬프트 상세 보기
 6. 즐겨찾기 관리
 7. 즐겨찾기 목록
+8. 프롬프트 내보내기 (카테고리별 Markdown)
 0. 종료
 
 ## 카테고리 목록
@@ -98,6 +99,14 @@ python prompt_manager.py
 **전체 커밋 이력 (`git log --oneline --graph`) — 브랜치 생성·병합 확인**
 
 ![git log --oneline --graph 결과](./screenshots/14_final_log.png)
+
+## 보너스 기능 (구현 완료)
+
+**1. 프롬프트 영속화 및 내보내기**
+
+- 프로그램 실행 중 프롬프트를 추가하거나 즐겨찾기 상태를 바꿀 때마다 `prompts.json` 파일에 자동으로 저장됩니다.
+- 프로그램을 다시 실행하면 `prompts.json`이 있을 경우 그 내용을 불러오고, 없으면 기본 프롬프트 3개로 시작합니다.
+- 메뉴 "8. 프롬프트 내보내기"를 선택하면 `exports/` 폴더 안에 카테고리별로 Markdown 파일(`텍스트_생성.md`, `이미지_생성.md` 등)을 생성합니다.
 
 ## 설계·개발 문서
 
