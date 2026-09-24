@@ -33,3 +33,4 @@ python prompt_manager.py
 - 페르소나
 - 자동화
 - 기타
+- (GitHub 웹에서 직접 수정한 테스트 줄입니다.)
