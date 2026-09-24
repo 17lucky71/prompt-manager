@@ -192,6 +192,21 @@ def toggle_favorite():
     print(f"\n'{p['title']}' 즐겨찾기가 {status}되었습니다.")
 
 
+def show_favorites():
+    print("\n=== 즐겨찾기 목록 ===")
+
+    favorites = [p for p in prompts if p["favorite"]]
+
+    if not favorites:
+        print("즐겨찾기한 프롬프트가 없습니다.")
+        return
+
+    for i, p in enumerate(favorites, start=1):
+        print(f"{i}. [{p['category']}] {p['title']} ⭐")
+
+    print(f"\n총 {len(favorites)}개의 즐겨찾기")
+
+
 def main():
     while True:
         show_menu()
@@ -213,7 +228,7 @@ def main():
         elif choice == "6":
             toggle_favorite()
         elif choice == "7":
-            print("(즐겨찾기 목록 기능은 곧 추가됩니다)")
+            show_favorites()
         else:
             print("잘못된 번호입니다. 다시 입력해주세요.")
 
