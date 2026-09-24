@@ -22,6 +22,8 @@ prompts = [
     },
 ]
 
+CATEGORIES = ["텍스트 생성", "이미지 생성", "영상 생성", "페르소나", "자동화", "기타"]
+
 
 def show_menu():
     print("\n=== 나만의 프롬프트 관리 ===")
@@ -35,6 +37,44 @@ def show_menu():
     print("0. 종료")
 
 
+def add_prompt():
+    print("\n=== 프롬프트 추가 ===")
+
+    while True:
+        title = input("제목: ").strip()
+        if title:
+            break
+        print("제목은 비어있을 수 없습니다. 다시 입력해주세요.")
+
+    while True:
+        content = input("내용: ").strip()
+        if content:
+            break
+        print("내용은 비어있을 수 없습니다. 다시 입력해주세요.")
+
+    print("\n카테고리 선택:")
+    for i, cat in enumerate(CATEGORIES, start=1):
+        print(f"{i}) {cat}")
+    print("(번호를 선택하거나, 목록에 없으면 직접 입력하세요)")
+
+    cat_input = input("선택: ").strip()
+    if cat_input.isdigit() and 1 <= int(cat_input) <= len(CATEGORIES):
+        category = CATEGORIES[int(cat_input) - 1]
+    elif cat_input:
+        category = cat_input
+    else:
+        category = "기타"
+
+    prompts.append({
+        "title": title,
+        "content": content,
+        "category": category,
+        "favorite": False
+    })
+
+    print(f"\n'{title}' 프롬프트가 추가되었습니다!")
+
+
 def main():
     while True:
         show_menu()
@@ -44,7 +84,7 @@ def main():
             print("프로그램을 종료합니다.")
             break
         elif choice == "1":
-            print("(프롬프트 추가 기능은 곧 추가됩니다)")
+            add_prompt()
         elif choice == "2":
             print("(프롬프트 목록 기능은 곧 추가됩니다)")
         elif choice == "3":
@@ -63,4 +103,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
