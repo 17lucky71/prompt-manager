@@ -21,6 +21,8 @@ python --version
 git --version
 ```
 
+![개발 환경 확인 (Python/Git 버전, 설정)](./screenshots/16_dev_environment.png)
+
 ## 실행 방법
 
 ```
@@ -46,6 +48,56 @@ python prompt_manager.py
 - 페르소나
 - 자동화
 - 기타
+
+## 실행 화면 스크린샷
+
+**메뉴 실행 화면**
+
+![메뉴 실행 화면](./screenshots/15_menu.png)
+
+**프롬프트 추가**
+
+![프롬프트 추가](./screenshots/17_add_prompt.png)
+
+**카테고리별 조회**
+
+![카테고리별 조회 메뉴](./screenshots/02_category_menu.png)
+![카테고리별 조회 결과](./screenshots/03_category_result.png)
+
+**프롬프트 검색**
+
+![프롬프트 검색](./screenshots/05_search_prompt.png)
+![검색 결과](./screenshots/06_search_result.png)
+
+**프롬프트 상세 보기**
+
+![프롬프트 상세 보기](./screenshots/07_detail.png)
+
+**즐겨찾기 관리**
+
+![즐겨찾기 추가](./screenshots/08_favorite_add.png)
+![목록에 표시된 즐겨찾기 별표](./screenshots/09_favorite_star_in_list.png)
+![즐겨찾기 목록](./screenshots/10_favorite_list.png)
+
+**프로그램 종료**
+
+![프로그램 종료](./screenshots/04_exit.png)
+
+## Git / GitHub 사용 내역 스크린샷
+
+**공개 샘플 저장소 Clone**
+
+![공개 샘플 저장소 clone](./screenshots/01_sample_clone.png)
+
+**GitHub 웹에서 직접 수정 후 pull로 반영**
+
+![GitHub 웹에서 README 수정](./screenshots/11_github_edit.png)
+![GitHub 웹 커밋 반영](./screenshots/12_github_commit.png)
+![git pull로 변경사항 받아오기](./screenshots/13_git_pull.png)
+
+**전체 커밋 이력 (`git log --oneline --graph`) — 브랜치 생성·병합 확인**
+
+![git log --oneline --graph 결과](./screenshots/14_final_log.png)
 
 ## 설계·개발 문서
 
