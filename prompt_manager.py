@@ -27,7 +27,6 @@ CATEGORIES = ["텍스트 생성", "이미지 생성", "영상 생성", "페르�
 
 
 def get_choice(prompt_text):
-    # 입력을 받아서 공백 제거 + 전각 숫자 등을 일반 숫자로 정규화
     raw = input(prompt_text)
     normalized = unicodedata.normalize("NFKC", raw)
     return normalized.strip()
@@ -122,6 +121,28 @@ def show_by_category():
     print(f"\n총 {len(filtered)}개의 프롬프트")
 
 
+def search_prompt():
+    print("\n=== 프롬프트 검색 ===")
+    keyword = input("검색어를 입력하세요 (제목/내용): ").strip()
+
+    if not keyword:
+        print("검색어를 입력해주세요.")
+        return
+
+    results = [p for p in prompts if keyword in p["title"] or keyword in p["content"]]
+
+    print(f"\n'{keyword}' 검색 결과:")
+    if not results:
+        print("검색 결과가 없습니다.")
+        return
+
+    for i, p in enumerate(results, start=1):
+        star = " ⭐" if p["favorite"] else ""
+        print(f"{i}. [{p['category']}] {p['title']}{star}")
+
+    print(f"\n총 {len(results)}개의 검색 결과")
+
+
 def main():
     while True:
         show_menu()
@@ -137,7 +158,7 @@ def main():
         elif choice == "3":
             show_by_category()
         elif choice == "4":
-            print("(프롬프트 검색 기능은 곧 추가됩니다)")
+            search_prompt()
         elif choice == "5":
             print("(프롬프트 상세 보기 기능은 곧 추가됩니다)")
         elif choice == "6":
